@@ -1,0 +1,85 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "virtualMachines_myvmjan2024_name": {
+            "defaultValue": "myvmjan2024",
+            "type": "String"
+        },
+        "disks_myvmjan2024_OsDisk_1_6d49ba6442bd41c488b71003e1b704f6_externalid": {
+            "defaultValue": "/subscriptions/011ce45d-6a68-482f-8d01-1f6a9c532093/resourceGroups/myvm/providers/Microsoft.Compute/disks/myvmjan2024_OsDisk_1_6d49ba6442bd41c488b71003e1b704f6",
+            "type": "String"
+        },
+        "networkInterfaces_myvmjan2024798_externalid": {
+            "defaultValue": "/subscriptions/011ce45d-6a68-482f-8d01-1f6a9c532093/resourceGroups/myvm/providers/Microsoft.Network/networkInterfaces/myvmjan2024798",
+            "type": "String"
+        }
+    },
+    "variables": {},
+    "resources": [
+        {
+            "type": "Microsoft.Compute/virtualMachines",
+            "apiVersion": "2023-03-01",
+            "name": "[parameters('virtualMachines_myvmjan2024_name')]",
+            "location": "eastus",
+            "identity": {
+                "type": "SystemAssigned"
+            },
+            "properties": {
+                "hardwareProfile": {
+                    "vmSize": "Standard_DS1_v2"
+                },
+                "additionalCapabilities": {
+                    "hibernationEnabled": false
+                },
+                "storageProfile": {
+                    "imageReference": {
+                        "publisher": "MicrosoftWindowsServer",
+                        "offer": "WindowsServer",
+                        "sku": "2022-datacenter-azure-edition",
+                        "version": "latest"
+                    },
+                    "osDisk": {
+                        "osType": "Windows",
+                        "name": "[concat(parameters('virtualMachines_myvmjan2024_name'), '_OsDisk_1_6d49ba6442bd41c488b71003e1b704f6')]",
+                        "createOption": "FromImage",
+                        "caching": "ReadWrite",
+                        "managedDisk": {
+                            "id": "[parameters('disks_myvmjan2024_OsDisk_1_6d49ba6442bd41c488b71003e1b704f6_externalid')]"
+                        },
+                        "deleteOption": "Delete"
+                    },
+                    "dataDisks": [],
+                    "diskControllerType": "SCSI"
+                },
+                "osProfile": {
+                    "computerName": "[parameters('virtualMachines_myvmjan2024_name')]",
+                    "adminUsername": "vmadmin12",
+                    "windowsConfiguration": {
+                        "provisionVMAgent": true,
+                        "enableAutomaticUpdates": true,
+                        "patchSettings": {
+                            "patchMode": "AutomaticByOS",
+                            "assessmentMode": "ImageDefault",
+                            "enableHotpatching": false
+                        },
+                        "enableVMAgentPlatformUpdates": false
+                    },
+                    "secrets": [],
+                    "allowExtensionOperations": true,
+                    "requireGuestProvisionSignal": true
+                },
+                "networkProfile": {
+                    "networkInterfaces": [
+                        {
+                            "id": "[parameters('networkInterfaces_myvmjan2024798_externalid')]",
+                            "properties": {
+                                "deleteOption": "Delete"
+                            }
+                        }
+                    ]
+                }
+            }
+        }
+    ]
+}
